@@ -1,5 +1,4 @@
 # Import necessary libraries 
-# test
 import random
 from tkinter import Tk, Frame, Label, Button
 import keyboard
