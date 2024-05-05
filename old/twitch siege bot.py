@@ -7,7 +7,7 @@ class Bot(commands.Bot):
         super().__init__(
             token='op',
             prefix='!',
-            initial_channels=['queenrose4444']
+            initial_channels=['#channel name']
         )
 
     async def event_ready(self):
