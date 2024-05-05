@@ -1,8 +1,8 @@
-click on this to get to the release
+click on the thing that looks like this image to the side of the page 
 
 ![image](https://github.com/QueenRose4444/siege-operator-randomizer/assets/159089781/6a26e4e5-b4a7-4f49-8f75-b0d11a03299d)
 
-then follow the instructions given in their
+then follow the instructions given in there
 
 op_rando_window
 this is the folder in which the .exe and required files are held
