@@ -4,11 +4,8 @@ click on the thing that looks like this image to the side of the page
 
 then follow the instructions given in there
 
-op_rando_window
-this is the folder in which the .exe and required files are held
-just download and put it somewhere you want it
-keep all files in the same folder
-and just run the better_op_rando_window.exe 
+inside the dist folder is where the .exe is 
+the no_hotkey varient is to make the code more antivirus friendly
 
 I have compiled using Pyinstaller
 
