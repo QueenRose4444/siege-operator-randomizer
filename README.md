@@ -11,11 +11,21 @@ the hotkeys are ```f13, f14, f15, f16, f17, ctrl+scroll lock```
 
 I have compiled using Pyinstaller
 
-```pyinstaller --onefile --windowed --optimize=2 --name "R6OperatorRandomizer" new_op_rando_window.py```
+```pyinstaller --onefile --windowed --optimize=2 --name "R6OperatorRandomizer" --icon="beep boop baap.ico" op_rando_window.py```
 
-```pyinstaller --onefile --windowed --optimize=2 --name "R6OperatorRandomizer_no_hotkey" new_op_rando_window_not_hotkey.py```
+```pyinstaller --onefile --windowed --optimize=2 --name "R6OperatorRandomizer_disabler" --icon="beep boop baap.ico" op_rando_window_with_disable.py```
+
+```pyinstaller --onefile --windowed --optimize=2 --name "R6OperatorRandomizer_icons_disabler" --icon="beep boop baap.ico" --add-data="images;images" "op_rando_window_with-icons_with-disable.py"```
+
+```pyinstaller --onefile --windowed --optimize=2 --name "R6OperatorRandomizer_icons(only_on_disable_menu)" --icon="beep boop baap.ico" --add-data="images;images" "op_rando_window_with-icons(only_on_disable_menu).py"```
 
 
-this is an example using the unranked/ranked options
+these are examples using the unranked/ranked options
+
+R6OperatorRandomizer:
 <img width="1045" height="319" alt="image" src="https://github.com/user-attachments/assets/28b60017-e3fe-43dd-afa3-bb02387f9b9c" />
+R6OperatorRandomizer_disabler:
 
+R6OperatorRandomizer_icons_disabler:
+
+R6OperatorRandomizer_icons(only_on_disable_menu):
