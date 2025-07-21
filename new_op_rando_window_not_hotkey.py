@@ -2,21 +2,15 @@
 import random
 from tkinter import Tk, Frame, Label, Button, Entry
 
-# Keyboard library commented out to avoid AV false positives
-# import keyboard
+# Keyboard library is not used in this version.
 
 # --- Operator Lists ---
 ATTACKERS = ["Sledge", "Thatcher", "Ash", "Thermite", "Twitch", "Montagne", "Glaz", "Fuze", "Blitz", "IQ","Buck", "Blackbeard", "Capitão", "Hibana","Jackal", "Ying", "Zofia", "Dokkaebi","Lion", "Finka", "Maverick", "Nomad","Gridlock", "Nokk", "Amaru", "Kali","Iana", "Ace", "Zero", "Flores","Osa", "Sens","Grim", "Brava","Ram", "Deimos","Striker", "Skopós","Rauora"]
 DEFENDERS = ["Smoke", "Mute", "Castle", "Pulse", "Doc", "Rook", "Jäger", "Bandit", 
     "Kapkan", "Tachanka","Frost", "Valkyrie", "Caveira", "Echo","Mira", "Lesion", "Ela", "Vigil","Maestro", "Alibi", "Clash", "Kaid","Mozzie", "Warden", "Goyo", "Wamai","Oryx", "Melusi", "Aruni","Thunderbird", "Thorn","Azami", "Solis","Fenrir", "Tubarao","Sentry"]
 
-# --- App Info (helps with AV detection) ---
-__version__ = "1.0.0"
-__author__ = "R6 Community"
-__description__ = "Rainbow Six Siege Operator Randomizer Tool"
-
 # --- Configuration Constants ---
-ROUND_COUNT = {"Ranked": 9, "Unranked": 7, "Quick": 5, "Just Generate": 1}
+ROUND_COUNT = {"Ranked": 9, "Unranked": 9, "Quick": 5, "Just Generate": 1}
 
 # --- GUI Styling Constants ---
 FONT_STYLE = (None, 12, 'bold')
@@ -32,10 +26,11 @@ class R6OperatorGenerator:
     def __init__(self):
         # --- Window Setup ---
         self.win = Tk()
-        self.win.title("R6 Operator Randomizer v1.0")
+        self.win.title("R6 Operator Randomizer v1.4")
         self.win.configure(background=BG_COLOR)
         self.win.attributes('-topmost', True)
-        self.win.minsize(600, 300)
+        # Hide the window until it's fully sized and configured.
+        self.win.withdraw()
 
         # --- State Variables ---
         self.last_mode = None
@@ -52,8 +47,10 @@ class R6OperatorGenerator:
         
         # --- Initialization ---
         self.create_widgets()
-        # Hotkeys disabled for AV compatibility
-        # self.setup_hotkeys()
+        # Hotkeys are disabled in this version.
+        self.fix_window_size()
+        # Now that everything is set up, make the window visible
+        self.win.deiconify()
 
     def create_widgets(self):
         """Creates and organizes all the UI elements in the window."""
@@ -89,6 +86,56 @@ class R6OperatorGenerator:
                 pady=5,
                 command=commands[mode]
             ).pack(side='left', padx=5)
+
+    def fix_window_size(self):
+        """
+        Calculates the required window size based on the longest operator names
+        and max rounds, then fixes the window size. This happens before the window is shown.
+        """
+        # 1. Find the longest names and max rounds (from Ranked mode)
+        longest_attacker = max(ATTACKERS, key=len)
+        longest_defender = max(DEFENDERS, key=len)
+        max_rounds = ROUND_COUNT["Ranked"]
+
+        # 2. Create dummy data with the longest names for sizing
+        dummy_rounds = {
+            "attackers": [longest_attacker] * max_rounds,
+            "defenders": [longest_defender] * max_rounds
+        }
+        # The number of backups will match the max number of rounds for sizing
+        dummy_backups = {
+            "attackers": [longest_attacker] * max_rounds,
+            "defenders": [longest_defender] * max_rounds
+        }
+
+        # 3. Temporarily store original data and set dummy data
+        original_rounds = self.generated_rounds
+        original_backups = self.generated_backups
+        self.generated_rounds = dummy_rounds
+        self.generated_backups = dummy_backups
+
+        # 4. Populate the frames with this max-size content to measure it
+        self.display_round_operators()
+        self.display_backup_operators()
+
+        # 5. Force the UI to update and calculate its required size
+        self.win.update_idletasks()
+        width = self.main_container.winfo_reqwidth()
+        height = self.main_container.winfo_reqheight()
+
+        # 6. Set the final, fixed geometry and make the window non-resizable
+        self.win.geometry(f"{width + 20}x{height + 20}")
+        self.win.resizable(False, False)
+
+        # 7. Clear the frames so the window starts up blank and clean
+        for widget in self.output_frame.winfo_children():
+            widget.destroy()
+        for widget in self.backup_frame.winfo_children():
+            widget.destroy()
+
+        # 8. Restore the original (empty) data structures
+        self.generated_rounds = original_rounds
+        self.generated_backups = original_backups
 
     def generate_new_set(self, mode):
         """Generates a new set of operators for the main rounds and a backup set."""
@@ -154,8 +201,9 @@ class R6OperatorGenerator:
 
         Label(parent_frame, text="Backup", bg=BG_COLOR, font=FONT_STYLE, fg=SIDE_LABEL_COLOR, padx=10).grid(row=0, column=0, sticky='w')
 
+        # Use "Back" + number for backup headers
         for i in range(len(data["attackers"])):
-            Label(parent_frame, text=f"Round {i+1}", bg=BG_COLOR, font=FONT_STYLE, fg=HEADER_TEXT_COLOR, pady=5).grid(row=0, column=i+1)
+            Label(parent_frame, text=f"Back {i+1}", bg=BG_COLOR, font=FONT_STYLE, fg=HEADER_TEXT_COLOR, pady=5).grid(row=0, column=i+1)
 
         Label(parent_frame, text="Attacker", bg=BG_COLOR, font=FONT_STYLE, fg=SIDE_LABEL_COLOR, padx=10).grid(row=1, column=0, sticky='w')
         for i, op in enumerate(data["attackers"]):
@@ -191,15 +239,6 @@ class R6OperatorGenerator:
         full_text = "\n\n".join(text_parts)
         self.win.clipboard_append(full_text.strip())
         print("Copied to clipboard!")
-
-    # Hotkeys disabled for AV compatibility
-    # def setup_hotkeys(self):
-    #     """Sets up the global hotkeys to re-run the generator."""
-    #     try:
-    #         keyboard.add_hotkey('f13', self.reactivate_last_mode)
-    #         keyboard.add_hotkey('ctrl+scroll lock', self.reactivate_last_mode)
-    #     except Exception as e:
-    #         print(f"Could not set up hotkeys: {e}")
 
     def reactivate_last_mode(self):
         """Re-runs the last used generation mode."""

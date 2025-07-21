@@ -1,6 +1,3 @@
-__version__ = "1.0.0"
-__author__ = "YourName"
-__description__ = "Rainbow Six Siege Operator Randomizer"
 # Import necessary libraries 
 import random
 from tkinter import Tk, Frame, Label, Button, Entry
@@ -17,9 +14,9 @@ DEFENDERS = ["Smoke", "Mute", "Castle", "Pulse", "Doc", "Rook", "Jäger", "Bandi
 
 
 # --- Configuration Constants ---
-ROUND_COUNT = {"Ranked": 9, "Unranked": 7, "Quick": 5, "Just Generate": 1}
+ROUND_COUNT = {"Ranked": 9, "Unranked": 9, "Quick": 5, "Just Generate": 1}
 
-# --- GUI Styling Constants (Updated based on user feedback) ---
+# --- GUI Styling Constants ---
 FONT_STYLE = (None, 12, 'bold') # Default font, size 12, bold
 BG_COLOR = '#1C1C1C'             # Dark grey background
 HEADER_TEXT_COLOR = "#FFFF00"    # Yellow for "Round X" headers
@@ -37,8 +34,8 @@ class R6OperatorGenerator:
         self.win.configure(background=BG_COLOR)
         # This makes the window always stay on top of other windows.
         self.win.attributes('-topmost', True)
-        # Set a minimum size for the window
-        self.win.minsize(600, 300) # Increased min height slightly for better spacing
+        # Hide the window until it's fully sized and configured.
+        self.win.withdraw()
 
         # --- State Variables ---
         self.last_mode = None
@@ -56,6 +53,10 @@ class R6OperatorGenerator:
         # --- Initialization ---
         self.create_widgets()
         self.setup_hotkeys()
+        # Calculate and set the fixed window size while it's hidden
+        self.fix_window_size()
+        # Now that everything is set up, make the window visible
+        self.win.deiconify()
 
     def create_widgets(self):
         """Creates and organizes all the UI elements in the window."""
@@ -92,11 +93,62 @@ class R6OperatorGenerator:
                 command=commands[mode]
             ).pack(side='left', padx=5)
 
+    def fix_window_size(self):
+        """
+        Calculates the required window size based on the longest operator names
+        and max rounds, then fixes the window size. This happens before the window is shown.
+        """
+        # 1. Find the longest names and max rounds (from Ranked mode)
+        longest_attacker = max(ATTACKERS, key=len)
+        longest_defender = max(DEFENDERS, key=len)
+        max_rounds = ROUND_COUNT["Ranked"]
+
+        # 2. Create dummy data with the longest names for sizing
+        dummy_rounds = {
+            "attackers": [longest_attacker] * max_rounds,
+            "defenders": [longest_defender] * max_rounds
+        }
+        # The number of backups will match the max number of rounds for sizing
+        dummy_backups = {
+            "attackers": [longest_attacker] * max_rounds,
+            "defenders": [longest_defender] * max_rounds
+        }
+
+        # 3. Temporarily store original data and set dummy data
+        original_rounds = self.generated_rounds
+        original_backups = self.generated_backups
+        self.generated_rounds = dummy_rounds
+        self.generated_backups = dummy_backups
+
+        # 4. Populate the frames with this max-size content to measure it
+        self.display_round_operators()
+        self.display_backup_operators()
+
+        # 5. Force the UI to update and calculate its required size
+        self.win.update_idletasks()
+        width = self.main_container.winfo_reqwidth()
+        height = self.main_container.winfo_reqheight()
+
+        # 6. Set the final, fixed geometry and make the window non-resizable
+        self.win.geometry(f"{width + 20}x{height + 20}")
+        self.win.resizable(False, False)
+
+        # 7. Clear the frames so the window starts up blank and clean
+        for widget in self.output_frame.winfo_children():
+            widget.destroy()
+        for widget in self.backup_frame.winfo_children():
+            widget.destroy()
+
+        # 8. Restore the original (empty) data structures
+        self.generated_rounds = original_rounds
+        self.generated_backups = original_backups
+
     def generate_new_set(self, mode):
         """Generates a new set of operators for the main rounds and a backup set."""
         self.last_mode = mode
         round_count = ROUND_COUNT.get(mode, 0)
 
+        # Check if there are enough unique operators for main + backup lists
         if len(ATTACKERS) < round_count * 2 or len(DEFENDERS) < round_count * 2:
             print(f"Not enough operators to generate a main and backup list for mode '{mode}'.")
             self.generated_rounds = {"attackers": [], "defenders": []}
@@ -105,17 +157,21 @@ class R6OperatorGenerator:
             self.display_backup_operators()
             return
 
+        # Generate main list
         main_attackers = random.sample(ATTACKERS, round_count)
         main_defenders = random.sample(DEFENDERS, round_count)
         self.generated_rounds["attackers"] = main_attackers
         self.generated_rounds["defenders"] = main_defenders
         
+        # Determine remaining operators for backups
         available_attackers_for_backup = [op for op in ATTACKERS if op not in main_attackers]
         available_defenders_for_backup = [op for op in DEFENDERS if op not in main_defenders]
         
+        # Generate backup list from the remaining operators, matching the round count
         self.generated_backups["attackers"] = random.sample(available_attackers_for_backup, round_count)
         self.generated_backups["defenders"] = random.sample(available_defenders_for_backup, round_count)
         
+        # Update the display
         self.display_round_operators()
         self.display_backup_operators()
 
@@ -124,11 +180,13 @@ class R6OperatorGenerator:
         parent_frame = self.output_frame
         data = self.generated_rounds
 
+        # Clear any existing widgets in the frame
         for widget in parent_frame.winfo_children():
             widget.destroy()
 
         if not data["attackers"]: return
 
+        # Grid layout for operators
         Label(parent_frame, text="", bg=BG_COLOR).grid(row=0, column=0)
         for i in range(len(data["attackers"])):
             Label(parent_frame, text=f"Round {i+1}", bg=BG_COLOR, font=FONT_STYLE, fg=HEADER_TEXT_COLOR, pady=5).grid(row=0, column=i+1)
@@ -141,6 +199,7 @@ class R6OperatorGenerator:
         for i, op in enumerate(data["defenders"]):
             Label(parent_frame, text=op, bg=BG_COLOR, font=FONT_STYLE, fg=DEFENDER_OP_COLOR).grid(row=2, column=i+1)
             
+        # Ensure columns resize equally to fill space
         for i in range(len(data["attackers"]) + 1):
             parent_frame.grid_columnconfigure(i, weight=1)
 
@@ -149,20 +208,20 @@ class R6OperatorGenerator:
         parent_frame = self.backup_frame
         data = self.generated_backups
 
+        # Clear any existing widgets in the frame
         for widget in parent_frame.winfo_children():
             widget.destroy()
 
         if not data["attackers"]: return
 
-        # Add "Backups" title in the top-left corner of this section
+        # "Backup" title
         Label(parent_frame, text="Backup", bg=BG_COLOR, font=FONT_STYLE, fg=SIDE_LABEL_COLOR, padx=10).grid(row=0, column=0, sticky='w')
 
-        # Add Round headers for backups to align with the main list
+        # Use "Back" + number for backup headers
         for i in range(len(data["attackers"])):
-            Label(parent_frame, text=f"Round {i+1}", bg=BG_COLOR, font=FONT_STYLE, fg=HEADER_TEXT_COLOR, pady=5).grid(row=0, column=i+1)
+            Label(parent_frame, text=f"Back {i+1}", bg=BG_COLOR, font=FONT_STYLE, fg=HEADER_TEXT_COLOR, pady=5).grid(row=0, column=i+1)
 
-        # Display backup operators under the new headers
-        # Using "Attacker" and "Defender" for the labels to ensure alignment
+        # Display backup operators
         Label(parent_frame, text="Attacker", bg=BG_COLOR, font=FONT_STYLE, fg=SIDE_LABEL_COLOR, padx=10).grid(row=1, column=0, sticky='w')
         for i, op in enumerate(data["attackers"]):
             Label(parent_frame, text=op, bg=BG_COLOR, font=FONT_STYLE, fg=ATTACKER_OP_COLOR).grid(row=1, column=i+1)
@@ -171,6 +230,7 @@ class R6OperatorGenerator:
         for i, op in enumerate(data["defenders"]):
             Label(parent_frame, text=op, bg=BG_COLOR, font=FONT_STYLE, fg=DEFENDER_OP_COLOR).grid(row=2, column=i+1)
 
+        # Ensure columns resize equally
         col_count = len(data["attackers"])
         for i in range(col_count + 1):
             parent_frame.grid_columnconfigure(i, weight=1)
@@ -202,6 +262,10 @@ class R6OperatorGenerator:
         """Sets up the global hotkeys to re-run the generator."""
         try:
             keyboard.add_hotkey('f13', self.reactivate_last_mode)
+            keyboard.add_hotkey('f14', self.reactivate_last_mode)
+            keyboard.add_hotkey('f15', self.reactivate_last_mode)
+            keyboard.add_hotkey('f16', self.reactivate_last_mode)
+            keyboard.add_hotkey('f17', self.reactivate_last_mode)
             keyboard.add_hotkey('ctrl+scroll lock', self.reactivate_last_mode)
         except Exception as e:
             print(f"Could not set up hotkeys: {e}")
