@@ -10,4 +10,5 @@ the no_hotkey varient is to make the code more antivirus friendly
 I have compiled using Pyinstaller
 
 this is an example using the standard and backup 
-![image](https://github.com/QueenRose4444/siege-operator-randomizer/assets/159089781/1e51b571-038e-40ad-bf46-743524a961ba)
+<img width="1045" height="319" alt="image" src="https://github.com/user-attachments/assets/28b60017-e3fe-43dd-afa3-bb02387f9b9c" />
+
