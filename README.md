@@ -13,6 +13,6 @@ I have compiled using Pyinstaller
 ```pyinstaller --onefile --windowed --optimize=2 --name "R6OperatorRandomizer" new_op_rando_window.py```
 ```pyinstaller --onefile --windowed --optimize=2 --name "R6OperatorRandomizer_no_hotkey" new_op_rando_window_not_hotkey.py```
 
-this is an example using the standard and backup 
+this is an example using the unranked/ranked options
 <img width="1045" height="319" alt="image" src="https://github.com/user-attachments/assets/28b60017-e3fe-43dd-afa3-bb02387f9b9c" />
 
