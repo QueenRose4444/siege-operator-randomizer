@@ -1,9 +1,6 @@
 # Import necessary libraries 
 import random
 from tkinter import Tk, Frame, Label, Button, Entry
-
-# Using the keyboard library for global hotkeys.
-# This means the hotkey will work even if the window isn't focused.
 import keyboard
 
 # --- Operator Lists ---
