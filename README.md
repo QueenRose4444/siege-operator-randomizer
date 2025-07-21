@@ -5,7 +5,9 @@ click on the thing that looks like this image to the side of the page
 then follow the instructions given in there
 
 inside the dist folder is where the .exe is 
-the no_hotkey varient is to make the code more antivirus friendly
+the no_hotkey varient was an attempt to make the code more antivirus friendly (which seems to have failed, if youd like the version that dosent trigger antivirus youll need to grab the .7z and use the multi file varient)
+
+the hotkeys are ```f13, f14, f15, f16, f17, ctrl+scroll lock```
 
 I have compiled using Pyinstaller
 ```pyinstaller --onefile --windowed --optimize=2 --name "R6OperatorRandomizer" new_op_rando_window.py```
