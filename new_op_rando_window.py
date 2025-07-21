@@ -268,10 +268,11 @@ class R6OperatorGenerator:
             print(f"Could not set up hotkeys: {e}")
 
     def reactivate_last_mode(self):
-        """Re-runs the last used generation mode."""
+    #"""Re-runs the last used generation mode safely on the GUI thread."""
         if self.last_mode:
             print(f"Reactivating: {self.last_mode}")
-            self.generate_new_set(self.last_mode)
+            # Schedule the GUI update on the main thread to avoid threading issues
+            self.win.after(0, lambda: self.generate_new_set(self.last_mode))
 
     def run(self):
         """Starts the Tkinter main loop."""
