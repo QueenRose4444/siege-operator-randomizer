@@ -26,7 +26,7 @@ class R6OperatorGenerator:
     def __init__(self):
         # --- Window Setup ---
         self.win = Tk()
-        self.win.title("R6 Operator Randomizer v1.4")
+        self.win.title("R6 Operator Randomizer")
         self.win.configure(background=BG_COLOR)
         self.win.attributes('-topmost', True)
         # Hide the window until it's fully sized and configured.
