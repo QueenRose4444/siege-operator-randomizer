@@ -21,10 +21,16 @@ I have compiled using Pyinstaller
 
 
 updated to siege Year 10 Season 2 Operators 
+
 R6OperatorRandomizer:
+
 R6OperatorRandomizer_disabler: (added disabler mode)
+
 R6OperatorRandomizer_icons_disabler: (disabler mode, added icons on both main display and disabler)
+
 R6OperatorRandomizer_icons(only_on_disable_menu): (disabler mode, icons only visable on the disable screen)
+
+
 
 these are examples using the unranked/ranked options
 
