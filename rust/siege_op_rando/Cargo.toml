@@ -1,0 +1,38 @@
+[package]
+name = "r6_op_rando"
+version = "0.1.0"
+edition = "2021"
+
+# Tell cargo to run build.rs before compiling the main crate
+build = "build.rs"
+
+# NOTE: This section tells Cargo what to run for the build script
+[build-dependencies]
+# This crate handles embedding the icon on Windows
+winres = "0.1"
+
+[dependencies]
+# Core GUI Framework - Added "persistence" feature
+eframe = { version = "0.27.2", features = ["persistence"] }
+
+# Data Handling & Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Randomization
+rand = "0.8.5"
+
+# Image Processing
+image = { version = "0.25.1", default-features = false, features = ["png"] }
+
+# Asset Bundling
+rust-embed = "8.4.0"
+
+# Asynchronous Operations & Networking for Updater
+poll-promise = "0.3.0"
+reqwest = { version = "0.12.4", features = ["blocking", "json"] }
+arboard = "3.4.0" # For clipboard functionality
+
+# Cross-platform Global Hotkeys - Added "serde" feature
+global-hotkey = { version = "0.7.0", features = ["serde"] }
+crossbeam-channel = "0.5.12"

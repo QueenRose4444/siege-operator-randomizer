@@ -4,3 +4,4 @@
 tmp.txt
 **.spec
 **/build/
+**/target/
