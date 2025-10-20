@@ -1,6 +1,6 @@
 [package]
 name = "r6_op_rando"
-version = "0.1.0"
+version = "1.1.0"
 edition = "2021"
 
 # Tell cargo to run build.rs before compiling the main crate
@@ -36,3 +36,6 @@ arboard = "3.4.0" # For clipboard functionality
 # Cross-platform Global Hotkeys - Added "serde" feature
 global-hotkey = { version = "0.7.0", features = ["serde"] }
 crossbeam-channel = "0.5.12"
+
+# For opening URLs in default browser
+open = "5.0"

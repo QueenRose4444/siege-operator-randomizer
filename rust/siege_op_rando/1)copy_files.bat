@@ -3,7 +3,7 @@
 
 :: Set the fixed destination folder
 set "tmp=%~dp0\tmp242"
-set "destination=C:\Users\rosie\Downloads\op_rando_window"
+set "destination=C:\Users\rosie\Downloads\op_rando_window\current"
 
 :: Create the destination directory if it doesn't exist
 if not exist "%destination%" mkdir "%destination%"
@@ -16,6 +16,7 @@ echo.
 :: This copies files from the same folder the .bat file is in.
 copy "%~dp0build.rs" "%tmp%"
 copy "%~dp0Cargo.toml" "%tmp%"
+copy "%~dp0build_rename.bat" "%destination%"
 
 :: Copy the CONTENTS of the src directory, also relative to the script's location.
 xcopy "%~dp0src\*" "%tmp%\" /S /E /I /Y

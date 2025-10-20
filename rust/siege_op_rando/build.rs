@@ -9,8 +9,7 @@ fn main() {
 
         // Set the icon for the executable.
         // It looks for the icon file relative to the project's root directory.
-        // The .expect() was removed from this line.
-        res.set_icon("assets/beep_boop_baap.ico");
+        res.set_icon("assets/beep_boop_baap-rounded.ico");
 
         // Compile the resource file and link it to the executable.
         res.compile().expect("Failed to compile Windows resource file.");
